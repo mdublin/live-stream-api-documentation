@@ -8,7 +8,7 @@ A Live Stream represents a unique live stream of video being pushed to Streamy.i
 A Live Stream can be used once for a specific event, or re-used forever. If you're building an application like Facebook Live or Twitch, you could create one Live Stream per user. This allows them to configure their broadcasting software once, and the Live Stream Playback ID will always show their latest stream.
 
 Each RTMP session creates a new video asset automatically. You can set up a webhook to be notified each time a broadcast (or Live Stream RTMP session) begins or ends with the video.live_stream.active and video.live_stream.idle events respectively. Assets that are created from a Live Stream have the same behavior as other Assets you create.
-## video/v1/live-streams [/live-streams]
+## Live Stream [/video/v1/live-streams]
 
 ### Create a live stream [POST]
 
@@ -115,7 +115,7 @@ Lists the live streams that currently exist in the current environment.
             ]
 
 
-## video/v1/live-streams/{LIVE_STREAM_ID} [/live-streams/{LIVE_STREAM_ID}]
+## Live Streams [/video/v1/live-streams/{LIVE_STREAM_ID}]
 
 ### Retrieve a live stream [GET]
 Retrieves the details of a live stream that has previously been created. Supply the unique live stream ID that was returned from your previous request, and Streamy.io will return the corresponding live stream information. The same information is returned when creating a live stream.
