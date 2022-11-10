@@ -203,3 +203,19 @@ Updates the parameters of a previously-created live stream. This currently suppo
                 }
             } 
         ]
+        
+## Terminating Live Stream [/video/v1/live-streams/{LIVE_STREAM_ID}/complete]
+
+### Signal live stream is complete [PUT]
+(Optional) End the live stream recording immediately instead of waiting for the reconnect_window. EXT-X-ENDLIST tag is added to the HLS manifest which notifies the player that this live stream is over.
+
++ Parameter
+    + LIVE_STREAM_ID (string) - The live stream ID
+    
++ Response 200 (application/json)
+
+        [
+            {
+                "data": {}
+            } 
+        ]
