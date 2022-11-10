@@ -1,0 +1,205 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# Live Stream API
+
+A Live Stream represents a unique live stream of video being pushed to Streamy.io. It includes configuration details (a Stream Key) for live broadcasting software/hardware and a Playback ID for playing the stream anywhere. Currently, RTMP is the only supported method of ingesting video.
+
+A Live Stream can be used once for a specific event, or re-used forever. If you're building an application like Facebook Live or Twitch, you could create one Live Stream per user. This allows them to configure their broadcasting software once, and the Live Stream Playback ID will always show their latest stream.
+
+Each RTMP session creates a new video asset automatically. You can set up a webhook to be notified each time a broadcast (or Live Stream RTMP session) begins or ends with the video.live_stream.active and video.live_stream.idle events respectively. Assets that are created from a Live Stream have the same behavior as other Assets you create.
+## video/v1/live-streams [/live-streams]
+
+### Create a live stream [POST]
+
+Creates a new live stream. Once created, an encoder can connect to Streamy.io via the specified stream key and begin streaming to an audience.
+
++ Request (application/json)
+
+        [
+            {
+                "playback_policy": [
+                    "public"
+                ],
+                "new_asset_settings": {
+                    "playback_policy": [
+                        "public"
+                    ]
+                }
+            }
+        ]
+
++ Response 201 (application/json)
+
+        [
+            {
+                  "data": {
+                    "stream_key": "abcdefgh",
+                    "status": "idle",
+                    "reconnect_window": 60,
+                    "playback_ids": [
+                      {
+                        "policy": "public",
+                        "id": "HNRDuwff3K2VjTZZAPuvd2Kx6D01XUQFv02GFBHPUka018"
+                      }
+                    ],
+                    "new_asset_settings": {
+                      "playback_policies": [
+                        "public"
+                      ]
+                    },
+                    "id": "ZEBrNTpHC02iUah025KM3te6ylM7W4S4silsrFtUkn3Ag",
+                    "created_at": "1609937654",
+                    "latency_mode": "standard",
+                    "max_continuous_duration": 43200
+                  }
+            } 
+        ]
+
+### List live streams [GET]
+Lists the live streams that currently exist in the current environment.
+
++ Response 200 (application/json)
+
+    + Body
+
+            [
+                {
+                  "data": [
+                    {
+                      "stream_key": "831b5bde-cd8a-5bc4-115d-4ba34b19f481",
+                      "status": "idle",
+                      "reconnect_window": 60,
+                      "playback_ids": [
+                        {
+                          "policy": "public",
+                          "id": "HNRDuwff3K2VjTZZAPuvd2Kx6D01XUQFv02GFBHPUka018"
+                        }
+                      ],
+                      "new_asset_settings": {
+                        "playback_policies": [
+                          "public"
+                        ]
+                      },
+                      "id": "ZEBrNTpHC02iUah025KM3te6ylM7W4S4silsrFtUkn3Ag",
+                      "created_at": "1609937654",
+                      "latency_mode": "standard",
+                      "max_continuous_duration": 43200
+                    },
+                    {
+                      "stream_key": "d273c65e-1fc8-27dc-e9ef-56144cbceb3a",
+                      "status": "idle",
+                      "reconnect_window": 60,
+                      "recent_asset_ids": [
+                        "SZs02xxHgYdkHp00OSCjJiHUHqzVQZNU332XPXRxe341o",
+                        "e4J9cwb5tjVxMeeV8201dC00i800ThPKKGT2SEN002dHH2s"
+                      ],
+                      "playback_ids": [
+                        {
+                          "policy": "public",
+                          "id": "00zOcribkUmXqXHzBTpflk2771BRTcKATqPjWf7JHpuM"
+                        }
+                      ],
+                      "new_asset_settings": {
+                        "playback_policies": [
+                          "public"
+                        ]
+                      },
+                      "id": "B65hEUWW01ErVKDDGImKcBquYhwEAkjW6Ic3lPY0299Cc",
+                      "created_at": "1607587513",
+                      "latency_mode": "standard",
+                      "max_continuous_duration": 43200
+                    }
+                  ]
+                } 
+            ]
+
+
+## video/v1/live-streams/{LIVE_STREAM_ID} [/live-streams/{LIVE_STREAM_ID}]
+
+### Retrieve a live stream [GET]
+Retrieves the details of a live stream that has previously been created. Supply the unique live stream ID that was returned from your previous request, and Streamy.io will return the corresponding live stream information. The same information is returned when creating a live stream.
+
++ Parameter
+    + LIVE_STREAM_ID (string) - The live stream ID
++ Response 200 (application/json)
+
+        [
+            {
+                  "data": {
+                    "stream_key": "831b5bde-cd8a-5bc4-115d-4ba34b19f481",
+                    "status": "idle",
+                    "reconnect_window": 60,
+                    "playback_ids": [
+                      {
+                        "policy": "public",
+                        "id": "HNRDuwff3K2VjTZZAPuvd2Kx6D01XUQFv02GFBHPUka018"
+                      }
+                    ],
+                    "new_asset_settings": {
+                      "playback_policies": [
+                        "public"
+                      ]
+                    },
+                    "id": "ZEBrNTpHC02iUah025KM3te6ylM7W4S4silsrFtUkn3Ag",
+                    "created_at": "1609937654",
+                    "latency_mode": "standard",
+                    "max_continuous_duration": 43200
+                  }
+                } 
+        ]
+        
+### Delete a live stream [DELETE]
+Deletes a live stream from the current environment. If the live stream is currently active and being streamed to, ingest will be terminated and the encoder will be disconnected.
++ Parameter
+    + LIVE_STREAM_ID (string) - The live stream ID
++ Response 204 (application/json)
+
+### Update a live stream [PATCH]
+Updates the parameters of a previously-created live stream. This currently supports a subset of variables. Supply the live stream ID and the updated parameters and Streamy.io will return the corresponding live stream information. The information returned will be the same after update as for subsequent get live stream requests.
+
++ Request (application/json)
+
+        [
+            { "passthrough" : "{YOUR_PASSTHROUGH_KEY}",
+              "latency_mode": "standard",
+              "reconnect_window": 30,
+              "max_continuous_duration": 1200
+            }
+        ]
+        
++ Attributes
+    + passthrough (string) - Arbitrary user-supplied metadata set for the live stream. Max 255 characters. In order to clear this value, the field should be included with an empty-string value.
+    + latency_mode (string) - Latency is the time from when the streamer transmits a frame of video to when you see it in the player. Set this as an alternative to setting low latency or reduced latency flags.Possible values include "low", "reduced", or "standard".
+    + reconnect_window (number) - When live streaming software disconnects from Streamy.io, either intentionally or due to a drop in the network, the Reconnect Window is the time in seconds that Streamy.io should wait for the streaming software to reconnect before considering the live stream finished and completing the recorded asset. (default value: 60, min: 0, max: 1800)
+    + use_slate_for_standard_latency (boolean) - default is false
+    + reconnect_slate_url (string) - The URL of the image file that Streamy.io should download and use as slate media during interruptions of the live stream media. 
+    + max_continuous_duration (number) - The time in seconds a live stream may be continuously active before being disconnected. (default: 43200, min: 60, max: 43200)
+    
+        
++ Response 200 (application/json)
+
+        [
+            {
+                "data": {
+                    "stream_key": "831b5bde-cd8a-5bc4-115d-4ba34b19f481",
+                    "status": "idle",
+                    "reconnect_window": 30,
+                    "playback_ids": [
+                        {
+                            "policy": "public",
+                            "id": "HNRDuwff3K2VjTZZAPuvd2Kx6D01XUQFv02GFBHPUka018"
+                        }
+                    ],
+                    "new_asset_settings": {
+                        "playback_policies": [
+                            "public"
+                        ]
+                    },
+                    "id": "ZEBrNTpHC02iUah025KM3te6ylM7W4S4silsrFtUkn3Ag",
+                    "created_at": "1609937654",
+                    "latency_mode": "standard",
+                    "max_continuous_duration": 1200
+                }
+            } 
+        ]
